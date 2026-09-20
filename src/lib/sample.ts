@@ -1,4 +1,4 @@
-import type { ArtPage } from '../types';
+import type { ArtPage, StockLot } from '../types';
 import { uid } from './uid';
 
 /**
@@ -34,5 +34,35 @@ export function createSamplePages(): ArtPage[] {
     // 封面与封底是跨整页的图片页，来稿只留了 2mm 出血
     bleed: i === 0 || i === titles.length - 1 ? 2 : 3,
     hue: Math.round((i * 360) / titles.length),
+  }));
+}
+
+/**
+ * 内置折手库存（与 16 页 4 帖手册配套）：
+ * - A、B 两个色批均已到货；
+ * - 第 3 帖 A 批有 30 张运输破损、正面报废，仅 470 张合格——全书唯一短板，
+ *   A 批单色可配 470 本、B 批单色 120 本，两批合计只能装 590 本，
+ *   其余三帖各余 30 张无法配套。
+ */
+export function createSampleLots(): StockLot[] {
+  const rows: Array<[number, string, number, number, StockLot['frontStatus'], StockLot['backStatus']]> = [
+    [0, 'A', 500, 500, 'ok', 'ok'],
+    [0, 'B', 120, 120, 'ok', 'ok'],
+    [1, 'A', 500, 500, 'ok', 'ok'],
+    [1, 'B', 120, 120, 'ok', 'ok'],
+    [2, 'A', 470, 470, 'ok', 'ok'],
+    [2, 'A', 30, 30, 'scrap', 'ok'],
+    [2, 'B', 120, 120, 'ok', 'ok'],
+    [3, 'A', 500, 500, 'ok', 'ok'],
+    [3, 'B', 120, 120, 'ok', 'ok'],
+  ];
+  return rows.map(([sheetIndex, colorBatch, frontQty, backQty, frontStatus, backStatus]) => ({
+    id: `lot-s${sheetIndex}-${colorBatch}-${frontStatus === 'ok' ? 'ok' : 'scrap'}`,
+    sheetIndex,
+    colorBatch,
+    frontQty,
+    backQty,
+    frontStatus,
+    backStatus,
   }));
 }

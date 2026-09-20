@@ -15,4 +15,24 @@ describe('App 冒烟渲染', () => {
     expect(html).toContain('版面错误');
     expect(html).toContain('折叠预演');
   });
+
+  it('首屏联动库存矩阵、成套批次与补印清单（两色批、第 3 帖短缺）', () => {
+    const html = renderToString(<App />);
+    // 库存工作台与矩阵
+    expect(html).toContain('折手库存与补印决策');
+    expect(html).toContain('库存矩阵');
+    // A 批 470 + B 批 120 = 590 本，不是各折手最小值的错误解读（应为 470 后混用兜底）
+    expect(html).toContain('现存可装订');
+    expect(html).toContain('>590<');
+    // 短板与报废示例可见
+    expect(html).toContain('已报废');
+    // 补印目标 600 与候选排序指标
+    expect(html).toContain('补印决策');
+    expect(html).toContain('组版');
+    // 印张卡片上的库存徽标与矩阵联动（第 3 帖 A470 + B120 = 590）
+    expect(html).toContain('库存 590');
+    // 撤销/重做按钮首屏存在
+    expect(html).toContain('撤销');
+    expect(html).toContain('重做');
+  });
 });
