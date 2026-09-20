@@ -1,4 +1,11 @@
 import type { ArtPage } from '../types';
+import {
+  defaultCompat,
+  type FoldStock,
+  type InventoryDoc,
+  type PrintBatch,
+  type ColorLot,
+} from './inventory';
 import { uid } from './uid';
 
 /**
@@ -35,4 +42,38 @@ export function createSamplePages(): ArtPage[] {
     bleed: i === 0 || i === titles.length - 1 ? 2 : 3,
     hue: Math.round((i * 360) / titles.length),
   }));
+}
+
+/**
+ * 内置折手库存示例（与 16 页 / 4 帖手册配套）：
+ * - 两个色批「晨雾蓝 / 暖沙金」，默认仅同色批配套；
+ * - 晨雾蓝批四帖各 100 份；暖沙金批四帖各 50 份，
+ *   但第 3 帖运输破损只剩 30 份正反面（一处短缺）；
+ * - 交付目标 150 本 → 现存可装 130 本，补印第 3 帖（暖沙金）20 份即可。
+ * 库存 id 固定，保证示例与测试稳定。
+ */
+export function createSampleInventory(sheetCount: number): InventoryDoc {
+  const colorLots: ColorLot[] = [
+    { id: 'lot-blue', name: '晨雾蓝' },
+    { id: 'lot-sand', name: '暖沙金' },
+  ];
+  const batches: PrintBatch[] = [
+    { id: 'batch-blue', name: '晨雾蓝首批', colorLotId: 'lot-blue' },
+    { id: 'batch-sand', name: '暖沙金首批', colorLotId: 'lot-sand' },
+  ];
+  const stocks: FoldStock[] = [];
+  for (let si = 0; si < sheetCount; si++) {
+    stocks.push({ batchId: 'batch-blue', sheetIndex: si, frontQty: 100, backQty: 100, status: 'ok' });
+    // 第 3 帖（index 2）运输破损：正反面合格仅 30
+    const sandQty = si === 2 ? 30 : 50;
+    stocks.push({ batchId: 'batch-sand', sheetIndex: si, frontQty: sandQty, backQty: sandQty, status: 'ok' });
+  }
+  return {
+    colorLots,
+    batches,
+    stocks,
+    compat: defaultCompat(),
+    locks: [],
+    deliveryTarget: 150,
+  };
 }

@@ -7,15 +7,22 @@ interface SheetCardProps {
   flip: FlipMode;
   selectedKey: string | null;
   onSelect: (key: string) => void;
+  /** 库存矩阵联动高亮 */
+  focused?: boolean;
+  onFocusChange?: (on: boolean) => void;
 }
 
 /** 一张印张：正面与背面，按翻面方式左右并排或上下叠放，中缝为折线/装订口 */
-export function SheetCard({ sheet, flip, selectedKey, onSelect }: SheetCardProps) {
+export function SheetCard({ sheet, flip, selectedKey, onSelect, focused, onFocusChange }: SheetCardProps) {
   const keyOf = (side: 'front' | 'back', pos: number) =>
     `${sheet.index}:${side}:${pos}`;
 
   return (
-    <section className={`sheet-card sheet-card--${flip}`}>
+    <section
+      className={`sheet-card sheet-card--${flip} ${focused ? 'is-focused' : ''}`}
+      onMouseEnter={() => onFocusChange?.(true)}
+      onMouseLeave={() => onFocusChange?.(false)}
+    >
       <header className="sheet-card__head">
         <h3>第 {sheet.index + 1} 帖印张</h3>
         <span className="muted">

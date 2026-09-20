@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "浏览器内骑马钉画册拼版台：页码配对、自动补白、长短边翻面与折叠预演",
+  "description": "浏览器内骑马钉画册拼版与装订配套台：页码配对、折手库存成套分配、色批兼容与补印决策",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
